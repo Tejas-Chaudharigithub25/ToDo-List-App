@@ -20,4 +20,4 @@ A simple To-Do List application with user authentication and task management, bu
 ## Installation  
 1. Clone the repository:  
    ```bash
-   git clone https://github.com/ToDo-List-App/todo-list-app.git     or     download
+   git clone https://github.com/Tejas-Chaudharigithub25/ToDo-List-App.git     or     download
