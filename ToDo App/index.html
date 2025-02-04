@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Home</title>
+    <script src="data.js"></script>
+
+</head>
+<script>
+    //    console.log(localStorage.getItem('email'));
+
+    if (localStorage.getItem('email') == null || localStorage.getItem('email') == '' && localStorage.getItem('pass') == null || localStorage.getItem('email') == '') {
+        // document.write(`<div style="padding: 10px;margin:5%;color: white; background-color: blueviolet; border:0px;">Please Login first.</div>`);
+        window.location = 'login.html';
+    }
+</script>
+
+<body>
+    <section>
+        <div class="row">
+            <div class="nav">
+                <div class="nav-brand">
+                    <h1>ToDo App</h1>
+                </div>
+                <div class="nav-links">
+                    <a href="#">Home</a>
+                    <script>
+                        let storageemail = localStorage.getItem('email');
+                        let storagepass = localStorage.getItem('pass');
+                        if (storageemail !== '' && storagepass !== '') {
+                            document.write(`<button onClick='logout()' style="padding: 10px;color: white; background-color: blueviolet; border:0px;">Logout</button>`);
+                        } else {
+                            document.write(`<button style="padding: 10px;color: white; background-color: blueviolet; border:0px;">LogIn</button>`);
+                        }
+                        function logout() {
+                            if (confirm('Logout ?')) {
+                                localStorage.removeItem('name');
+                                localStorage.removeItem('email');
+                                localStorage.removeItem('pass');
+                                window.location = 'login.html';
+                            }
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="row">
+            <div class="table">
+                <div class="table-brand">
+                    <h3>ToDo App</h3>
+                </div>
+                <br>
+                <div style="display: flex; justify-content: space-between;">
+                    <input onChange="filterData(this.value)" type="text" placeholder="Search Title..."
+                        style="margin: 0px 15px 0px 15px;padding: 5px; width: 30%;">
+                    <script>
+
+                        function filterData(values) {
+                            let index = 0;
+                            let tddata = document.getElementById("tddata");
+                            tddata.innerHTML = '';
+                            if (values.trim() === '') {
+                                getpData();
+                                return;
+                            }
+                            let filteredData = tododata.filter(item=>item.title.toLowerCase().includes(values.toLowerCase()));
+                            filteredData.map((item, index) => {
+                                let row = document.createElement("tr");
+                                    row.innerHTML = `<td id='${index}'>${index + 1}</td>
+                                <td id='tabdata1'>${item.title}</td>
+                                <td id='tabdata2'>${item.desc}</td>
+                                <td id='tabdata3'>${item.date}</td>
+                                <td>
+                                    <button style="border: 0px; padding: 8px; color: white; background-color: rgb(224, 187, 38); cursor: pointer;" onClick='handleUpdate(${index},"${item.title}","${item.desc}","${item.date}")'>Update</button>
+                                    <button style="border: 0px; padding: 8px; color: white; background-color: rgb(245, 48, 48); cursor: pointer;" onclick='handleDelete(${index})'>Delete</button>
+                                </td>`;
+                                tddata.appendChild(row);
+                            });
+                        }
+                    </script>
+                    <button onclick="showModel()"
+                        style="margin:0px 15px 0px 0px;border: 0px; padding: 8px;color: white; background-color: rgba(53, 203, 254, 0.945);cursor: pointer;width: 10%;">Add
+                        Todo</button>
+                    <script>
+                        function showModel() {
+                            let body = document;
+                            let model = document.getElementById('model-section');
+                            let modelname = document.getElementById('model-brand').innerHTML = `<h1>Add Todo</h1><button onclick="document.getElementById('model-section').style.display='none'"
+                            style="margin:0px 15px 0px 0px;border: 0px; padding: 8px;color: white; background-color:gray;cursor: pointer;">X</button>`;
+                            if (model.style.display == 'none') {
+                                model.style.display = 'block';
+                                model.style.zIndex = '2';
+                            } else {
+                                model.style.display = 'none';
+                            }
+                        }
+                    </script>
+                </div>
+                <div class="table-body">
+                    <table style="width: 100%;">
+                        <tr style="padding: 20px; ">
+                            <th>Sr. No</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Date/Time</th>
+                            <th>Action</th>
+                        </tr>
+                        <tbody id="tddata" style="padding: 20px;">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="model-section" id="model-section" style="display: none;">
+            <div class="row">
+                <div class="model">
+                    <div class="model-brand" id="model-brand">
+                        <h1>Add Todo</h1>
+                        <button onclick="handleClose()"
+                            style="margin:0px 15px 0px 0px;border: 0px; padding: 8px;color: white; background-color:gray;cursor: pointer;">X</button>
+                    </div>
+                    <div class="model-body" style="margin: 0px 0px 10px 0px;">
+                        <form onsubmit="handleForm(event)">
+                            <input id="id" type="text" hidden><br>
+                            <input id="title" name="title" type="text" placeholder="Enter Title" required><br>
+                            <input id="desc" name="desc" type="text" placeholder="Enter Description" required><br>
+                            <p>Select Due Date</p><input id="date" name="date" type="date"><br>
+                            <div><button class="changebtn"
+                                    style="margin:0px 15px 0px 0px;border: 0px; padding: 8px;color: white; background-color: rgba(53, 203, 254, 0.945);cursor: pointer;">Add
+                                    Todo</button></div>
+                        </form>
+                        <script>
+                            let idi = 0;
+                            function handleForm(event) {
+                                event.preventDefault();
+                                if (document.querySelector('#id').value) {
+                                    let id = document.querySelector('#id').value;
+                                    let title1 = document.getElementById("title").value;
+                                    let desc1 = document.getElementById("desc").value;
+                                    let date1 = document.getElementById("date").value;
+                                    tododata.filter(item => {
+                                        if (id == item.id) {
+                                            tododata.splice(id, 1, { 'id': id, 'title': title1, 'desc': desc1, 'date': date1 });
+                                        }
+                                    });
+
+                                    document.getElementById("title").value = '';
+                                    document.getElementById("desc").value = '';
+                                    document.getElementById("date").value = '';
+
+                                    getpData();
+
+                                } else {
+
+                                    let title = document.getElementById("title").value;
+                                    let desc = document.getElementById("desc").value;
+                                    let date = document.getElementById("date").value;
+                                    let changebtn = document.querySelector(".changebtn").innerHTML = 'Add Todo';
+                                    document.querySelector(".changebtn").setAttribute('id', 'addbtn');
+
+                                    let newDate = { "id": idi++, "title": title, "desc": desc, "date": date };
+                                    tododata.push(newDate);
+
+                                    document.getElementById("title").value = '';
+                                    document.getElementById("desc").value = '';
+                                    document.getElementById("date").value = '';
+
+                                    getpData();
+                                }
+
+                            }
+                            function getpData() {
+                                let tddata = document.getElementById("tddata");
+                                tddata.innerHTML = '';
+                                tododata.map((item, index) => {
+                                    let row = document.createElement("tr");
+                                    row.innerHTML = `<td id='${index}'>${index + 1}</td>
+                                                    <td id='tabdata1'>${item.title}</td>
+                                                    <td id='tabdata2'>${item.desc}</td>
+                                                    <td id='tabdata3'>${item.date}</td>
+                                                    <td>
+                                                        <button style="border: 0px; padding: 8px; color: white; background-color: rgb(224, 187, 38); cursor: pointer;" onClick='handleUpdate(${index},"${item.title}","${item.desc}",${item.date})'>Update</button>
+                                                        <button style="border: 0px; padding: 8px; color: white; background-color: rgb(245, 48, 48); cursor: pointer;" onclick='handleDelete(${index})'>Delete</button>
+                                                    </td>`;
+                                    tddata.appendChild(row);
+                                });
+                            }
+                            function handleDelete(delId) {
+                                tododata.splice(delId, 1);
+                                getpData();
+                            }
+                            function handleUpdate(upId, title, desc, date) {
+                                let model2 = document.getElementById('model-section');
+                                let intitle = document.getElementById('title').value = title;
+                                let indesc = document.getElementById('desc').value = desc;
+                                let indate = document.getElementById('date').value = date;
+                                let changebtn = document.querySelector(".changebtn").innerHTML = 'Update Todo';
+                                document.querySelector(".changebtn").setAttribute('id', 'upbtn');
+
+                                document.querySelector("#id").value = upId;
+
+                                let modelname = document.getElementById('model-brand').innerHTML = `<h1>Update Todo</h1><button onclick="handleClose()"
+                            style="margin:0px 15px 0px 0px;border: 0px; padding: 8px;color: white; background-color:gray;cursor: pointer;">X</button>`;
+                                if (model2.style.display == 'none') {
+                                    model2.style.display = 'block';
+                                    model2.style.zIndex = '2';
+                                } else {
+                                    model.style.display = 'none';
+                                }
+                            }
+                            function handleClose() {
+                                document.getElementById('model-section').style.display = 'none';
+                                document.getElementById('title').value = '';
+                                document.getElementById('desc').value = '';
+                                document.getElementById('date').value = '';
+                                document.getElementById('id').value = '';
+                                document.getElementById('upbtn').innerHTML = 'Add Todo';
+                            }
+
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <style>
+        .row {
+            display: flex;
+            justify-content: center;
+        }
+
+        .nav {
+            width: 80%;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-radius: 5px;
+            box-shadow: 1px 1px 10px 2px rgba(10, 2, 10, 0.2);
+            margin: 20px;
+        }
+
+        .nav-brand {
+            padding: 10px;
+            margin: 5px;
+        }
+
+        .nav-links>a {
+            padding: 10px;
+            margin: 2px;
+            text-decoration: none;
+            font-size: large;
+        }
+
+        .table {
+            width: 80%;
+            display: flex;
+            flex-direction: column;
+            border-radius: 5px;
+            box-shadow: 1px 1px 10px 2px rgba(10, 2, 10, 0.2);
+            margin: 20px;
+            padding: 20px 0px 10px 0px;
+        }
+
+        .table-brand {
+            text-align: center;
+        }
+
+        .table-body {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .model {
+            width: 500px;
+            display: flex;
+            flex-direction: column;
+            border-radius: 5px;
+            box-shadow: 1px 1px 10px 2px rgba(10, 2, 10, 0.2);
+            margin: 100px;
+            background-color: white;
+            padding: 20px;
+        }
+
+        .model-section {
+            position: absolute;
+            top: 0px;
+            width: 100vw;
+            height: 100vh;
+            overflow-y: hidden;
+            background-color: rgba(37, 35, 35, 0.384);
+        }
+
+        .model-brand {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0px 5px 0px;
+        }
+    </style>
+</body>
+
+</html>
